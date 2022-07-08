@@ -47,7 +47,7 @@ namespace APOD_Wallpaper
 
         private void APOD_Menu_Clicked(object sender, EventArgs e)
         {
-            
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(APOD_URL) { UseShellExecute = true });   
         }
 
         private void Exit_Menu_Click(object sender, EventArgs e)
