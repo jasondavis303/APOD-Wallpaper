@@ -30,10 +30,14 @@ namespace APOD_Wallpaper
         
         public MyAppContext()
         {
+            _cancellationToken = _cancellationTokenSource.Token;
+
             //Run on login
             var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             key.SetValue(Application.ProductName, Application.ExecutablePath);
-           
+            key.Dispose();
+
+
             //Menu
             var cms = _trayIcon.ContextMenuStrip = new ContextMenuStrip();
 
@@ -41,7 +45,6 @@ namespace APOD_Wallpaper
             cms.Items.Add("-");
             cms.Items.Add("Exit").Click += Exit_Menu_Click;
 
-            _cancellationToken = _cancellationTokenSource.Token;
             _timer = new System.Threading.Timer(new TimerCallback(Timer_Ticked), null, 0, Timeout.Infinite);
         }
 
