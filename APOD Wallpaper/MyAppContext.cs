@@ -1,5 +1,5 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace APOD_Wallpaper;
 
@@ -82,25 +83,24 @@ internal class MyAppContext : ApplicationContext
         try { lastUrl = key.GetValue("LastUrl", string.Empty) as string; }
         catch { }
 
-        string apiUrl = "https://api.nasa.gov/planetary/apod?api_key=dT4APYOJBWpbHdA5GkvmglXwhvMgaSGXdnJK1cyg";
+        string apiUrl = "https://science.nasa.gov/wp-json/wp/v2/apod-basic?page=1&per_page=1";
 
-        string currentUrl = null;
-        var apodResponse = await _httpClient.GetFromJsonAsync<APODResponse>(apiUrl, _cancellationToken).ConfigureAwait(false);
-        currentUrl = apodResponse.Hdurl;
-        currentUrl ??= apodResponse.Url;
+        var apodResponse = await _httpClient.GetFromJsonAsync<List<APODResponse>>(apiUrl, _cancellationToken).ConfigureAwait(false);
+        string currentUrl = apodResponse[0].Hdurl;
+        currentUrl ??= apodResponse[0].Url;
         if (string.IsNullOrWhiteSpace(currentUrl))
             return;
         if (currentUrl == lastUrl)
             return;
 
 
-        string ext = (Path.GetExtension(currentUrl) + string.Empty).ToLower();
+        string ext = (Path.GetExtension(new Uri(currentUrl).LocalPath) + string.Empty).ToLower();
         if (!_validImageExtensions.Contains(ext))
             return;
         string imageFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DustyPig.tv", "APOD Wallpaper");
         Directory.CreateDirectory(imageFile);
         imageFile = Path.Combine(imageFile, "apod_image" + ext);
-        
+
 
         using var httpResponse = await _httpClient.GetAsync(currentUrl, HttpCompletionOption.ResponseHeadersRead, _cancellationToken).ConfigureAwait(false);
         httpResponse.EnsureSuccessStatusCode();
