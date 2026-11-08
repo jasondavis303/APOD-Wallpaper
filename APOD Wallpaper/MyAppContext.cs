@@ -77,7 +77,7 @@ internal class MyAppContext : ApplicationContext
 
     private async Task DoWork()
     {
-        using var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\DustyPig.tv\\APOD Wallpaper", true);
+        using var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\jasondavis303\\APOD Wallpaper", true);
 
         string lastUrl = null;
         try { lastUrl = key.GetValue("LastUrl", string.Empty) as string; }
@@ -97,7 +97,7 @@ internal class MyAppContext : ApplicationContext
         string ext = (Path.GetExtension(new Uri(currentUrl).LocalPath) + string.Empty).ToLower();
         if (!_validImageExtensions.Contains(ext))
             return;
-        string imageFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DustyPig.tv", "APOD Wallpaper");
+        string imageFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "jasondavis303", "APOD Wallpaper");
         Directory.CreateDirectory(imageFile);
         imageFile = Path.Combine(imageFile, "apod_image" + ext);
 
